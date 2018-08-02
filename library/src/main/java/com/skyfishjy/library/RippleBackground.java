@@ -6,7 +6,12 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -26,6 +31,8 @@ public class RippleBackground extends RelativeLayout{
     private static final int DEFAULT_FILL_TYPE=0;
 
     private int rippleColor;
+    private int rippleColorA;
+    private int rippleColorB;
     private float rippleStrokeWidth;
     private float rippleRadius;
     private int rippleDurationTime;
@@ -64,6 +71,8 @@ public class RippleBackground extends RelativeLayout{
 
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RippleBackground);
         rippleColor=typedArray.getColor(R.styleable.RippleBackground_rb_color, getResources().getColor(R.color.rippelColor));
+        rippleColorA=typedArray.getColor(R.styleable.RippleBackground_rb_color_a, 0);
+        rippleColorB=typedArray.getColor(R.styleable.RippleBackground_rb_color_b, 0);
         rippleStrokeWidth=typedArray.getDimension(R.styleable.RippleBackground_rb_strokeWidth, getResources().getDimension(R.dimen.rippleStrokeWidth));
         rippleRadius=typedArray.getDimension(R.styleable.RippleBackground_rb_radius,getResources().getDimension(R.dimen.rippleRadius));
         rippleDurationTime=typedArray.getInt(R.styleable.RippleBackground_rb_duration,DEFAULT_DURATION_TIME);
@@ -79,9 +88,16 @@ public class RippleBackground extends RelativeLayout{
         if(rippleType==DEFAULT_FILL_TYPE){
             rippleStrokeWidth=0;
             paint.setStyle(Paint.Style.FILL);
-        }else
+        }else{
             paint.setStyle(Paint.Style.STROKE);
+        }
         paint.setColor(rippleColor);
+
+        if (rippleColorA != 0 && rippleColorB != 0) {
+            RadialGradient gradient = new RadialGradient(200, 0, 200, rippleColorA,
+                    rippleColorB, Shader.TileMode.CLAMP);
+            paint.setShader(gradient);
+        }
 
         rippleParams=new LayoutParams((int)(2*(rippleRadius+rippleStrokeWidth)),(int)(2*(rippleRadius+rippleStrokeWidth)));
         rippleParams.addRule(CENTER_IN_PARENT, TRUE);
